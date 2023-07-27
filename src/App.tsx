@@ -1,25 +1,26 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import RightWindow from "./components/RightWindow";
+import MainScene from './components/MainScene';
+import { Stack } from '@mui/material'
+import styled from '@emotion/styled'
+
+const Div = styled.div`
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction: row;
+`
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Div className="App">
+      <Stack direction="row">
+        <MainScene />
+        <RightWindow />
+      </Stack>
+    </Div>
   );
 }
 
