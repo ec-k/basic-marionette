@@ -2,6 +2,8 @@ import React from "react";
 import styled from "@emotion/styled"
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { IReactionDisposer, Reaction, reaction } from "mobx";
+import { objectHandler } from "../stores/ObjectHandler";
 
 type MainScene = {
     clock: THREE.Clock
@@ -62,17 +64,9 @@ const createScene = (
 
     mainScene.scene.background = new THREE.Color(0x2b2a2f)
 
-    placeCube(mainScene.scene)
-
     return mainScene
 }
 
-function placeCube(scene: THREE.Scene) {
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
-    const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xaaa })
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
-    scene.add(cube)
-}
 
 const Div = styled.div`
     width: calc(100vw - 350px);
@@ -99,7 +93,19 @@ const MainSceneWindow: React.FC = () => {
         if (!canvasRef.current) return
         if (!divRef.current) return
         if (!sceneRef.current) createScene(sceneRef, canvasRef.current, divRef.current)
+        const dispo: IReactionDisposer[] = []
         render3d()
+
+        dispo.push(
+            reaction(
+                () => objectHandler.fbxObjectSrc,
+                () => {
+                    if (!sceneRef.current) return
+                    objectHandler.loadFbxObject(sceneRef.current.scene)
+                }
+            )
+        )
+
         return () => cancelAnimationFrame(reqIdRef.current)
     }, [])
 
