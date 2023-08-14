@@ -2,6 +2,7 @@ import React from "react";
 import styled from "@emotion/styled"
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { IReactionDisposer, Reaction, reaction } from "mobx";
 import { objectHandler } from "../stores/ObjectHandler";
 
@@ -16,7 +17,8 @@ type MainScene = {
 const createScene = (
     sceneRef: React.MutableRefObject<MainScene | null>,
     canvas: HTMLCanvasElement,
-    div: HTMLDivElement
+    div: HTMLDivElement,
+    control: React.MutableRefObject<TransformControls | null>,
 ) => {
     const mainScene = {
         clock: new THREE.Clock(),
@@ -36,7 +38,7 @@ const createScene = (
     sceneRef.current = mainScene
     canvas.addEventListener('webglcontextlost', (ev) => {
         ev.preventDefault()
-        createScene(sceneRef, canvas, div)
+        createScene(sceneRef, canvas, div, control)
     })
     mainScene.renderer.setSize(div.clientWidth, div.clientHeight)
     mainScene.renderer.setPixelRatio(window.devicePixelRatio)
@@ -46,13 +48,24 @@ const createScene = (
     mainScene.camera.position.set(1.5, 2, 5)
 
     // Smooth camera control with Orbit Control
-    const controls = new OrbitControls(
+    const orbit = new OrbitControls(
         mainScene.camera,
         mainScene.renderer.domElement,
     )
-    controls.screenSpacePanning = true
-    controls.target.set(0.0, 0.5, 0.0)
-    controls.update()
+    orbit.screenSpacePanning = true
+    orbit.mouseButtons = {
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.ROTATE
+    }
+    orbit.target.set(0.0, 0.5, 0.0)
+    orbit.update()
+
+    // TransformControl
+    control.current = new TransformControls(mainScene.camera, mainScene.renderer.domElement)
+    control.current.setMode('rotate')
+    control.current.setSpace('local')
+    mainScene.scene.add(control.current)
+
 
     // Grid Helper
     const gridHelper = new THREE.GridHelper(100, 100);
@@ -78,6 +91,7 @@ const MainSceneWindow: React.FC = () => {
     const sceneRef = React.useRef<MainScene | null>(null)
     const divRef = React.useRef<HTMLDivElement | null>(null)
     const reqIdRef = React.useRef<number>(0);
+    const control = React.useRef<TransformControls | null>(null)
 
 
     function render3d() {
@@ -92,7 +106,7 @@ const MainSceneWindow: React.FC = () => {
     React.useEffect(() => {
         if (!canvasRef.current) return
         if (!divRef.current) return
-        if (!sceneRef.current) createScene(sceneRef, canvasRef.current, divRef.current)
+        if (!sceneRef.current) createScene(sceneRef, canvasRef.current, divRef.current, control)
         const dispo: IReactionDisposer[] = []
         render3d()
 
@@ -100,8 +114,10 @@ const MainSceneWindow: React.FC = () => {
             reaction(
                 () => objectHandler.fbxObjectSrc,
                 () => {
-                    if (!sceneRef.current) return
-                    objectHandler.loadFbxObject(sceneRef.current.scene)
+                    if (sceneRef.current && control.current)
+                        objectHandler.loadFbxObject(sceneRef.current.scene, control.current)
+                    // if (control.current && objectHandler.fbxObject)
+                    //     control.current.attach(objectHandler.fbxObject)
                 }
             )
         )

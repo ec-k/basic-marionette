@@ -1,4 +1,5 @@
 import { action, makeObservable, observable } from 'mobx'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 class ObjectHandler {
@@ -19,12 +20,20 @@ class ObjectHandler {
         this.fbxObjectSrc = url
     }
 
-    loadFbxObject(scene: THREE.Scene) {
+    loadFbxObject(scene: THREE.Scene, control: TransformControls) {
         if (!this.fbxObjectSrc) return
         const fbxLoader = new FBXLoader()
         fbxLoader.load(this.fbxObjectSrc, (object) => {
+            if (this.fbxObject) scene.remove(this.fbxObject)
+
+            this.fbxObject = object
+
+            // Add object to scene.
             object.scale.set(0.01, 0.01, 0.01)
             scene.add(object)
+
+            // Attach object to Transform Controls.
+            control.attach(object)
         })
     }
 }

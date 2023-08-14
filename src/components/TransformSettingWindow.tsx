@@ -1,7 +1,9 @@
 import React from "react";
 import { Box, Grid, TextField } from '@mui/material'
+import { objectHandler } from "../stores/ObjectHandler";
 
 const TransformSettingWindow: React.FC = () => {
+    const object = objectHandler.fbxObject
     return <Box>
         <h3>Transform</h3>
         <Grid container spacing={2}>
