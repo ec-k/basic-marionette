@@ -5,11 +5,12 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import TransformSettingWindw from "./TransformSettingWindow"
 import networkHandler from "../models/NetworkHandler";
 import { Vector3, Quaternion } from 'three'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import styled from '@emotion/styled'
 
 const Div = styled.div`
-    padding: 50px 0 0 20px;
-    width: 20%;
+    padding: 50px 20px 0 20px;
+    width: 350px;
     border-left: 1px solid #121212;
 `
 
@@ -18,6 +19,13 @@ const RightWindow: React.FC = () => {
         const pos = new Vector3() // Cubeの値から取得するようにする
         const rot = new Quaternion() // Cubeの価から取得するようにする
         networkHandler.sendPosRot(pos, rot)
+    }
+    function loadFbx() {
+        const fbxLoader = new FBXLoader()
+
+        fbxLoader.load('', () => {
+            
+        })
     }
 
     return <Div>

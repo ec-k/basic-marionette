@@ -14,6 +14,7 @@ type MainScene = {
 const createScene = (
     sceneRef: React.MutableRefObject<MainScene | null>,
     canvas: HTMLCanvasElement,
+    div: HTMLDivElement
 ) => {
     const mainScene = {
         clock: new THREE.Clock(),
@@ -25,7 +26,7 @@ const createScene = (
         scene: new THREE.Scene(),
         camera: new THREE.PerspectiveCamera(
             35,
-            window.innerWidth / window.innerHeight, // ここ，html要素の横幅，縦幅を対象にした方が良い
+            window.innerWidth / window.innerHeight,
             0.1,
             1000,
         ),
@@ -33,9 +34,9 @@ const createScene = (
     sceneRef.current = mainScene
     canvas.addEventListener('webglcontextlost', (ev) => {
         ev.preventDefault()
-        createScene(sceneRef, canvas)
+        createScene(sceneRef, canvas, div)
     })
-    mainScene.renderer.setSize(window.innerWidth, window.innerHeight)
+    mainScene.renderer.setSize(div.clientWidth, div.clientHeight)
     mainScene.renderer.setPixelRatio(window.devicePixelRatio)
     const light = new THREE.DirectionalLight(0xffffff)
     light.position.set(1, 1, 1).normalize()
@@ -74,14 +75,14 @@ function placeCube(scene: THREE.Scene) {
 }
 
 const Div = styled.div`
-    display:flex;
-    flex-grow:1;
+    width: calc(100vw - 350px);
 `
 
 
 const MainSceneWindow: React.FC = () => {
     const canvasRef = React.useRef<HTMLCanvasElement>(null)
     const sceneRef = React.useRef<MainScene | null>(null)
+    const divRef = React.useRef<HTMLDivElement | null>(null)
     const reqIdRef = React.useRef<number>(0);
 
 
@@ -96,12 +97,13 @@ const MainSceneWindow: React.FC = () => {
 
     React.useEffect(() => {
         if (!canvasRef.current) return
-        if (!sceneRef.current) createScene(sceneRef, canvasRef.current)
+        if (!divRef.current) return
+        if (!sceneRef.current) createScene(sceneRef, canvasRef.current, divRef.current)
         render3d()
         return () => cancelAnimationFrame(reqIdRef.current)
     }, [])
 
-    return <Div>
+    return <Div ref={divRef}>
         <canvas ref={canvasRef} />
     </Div>
 }
