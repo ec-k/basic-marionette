@@ -41,9 +41,9 @@ const createScene = (
     mainScene.renderer.setSize(div.clientWidth, div.clientHeight)
     mainScene.renderer.setPixelRatio(window.devicePixelRatio)
     const light = new THREE.DirectionalLight(0xffffff)
-    light.position.set(1, 1, 1).normalize()
+    light.position.set(1.5, 3, 1).normalize()
     mainScene.scene.add(light)
-    mainScene.camera.position.set(0.0, 1.15, 1.5)
+    mainScene.camera.position.set(1.5, 2, 5)
 
     // Smooth camera control with Orbit Control
     const controls = new OrbitControls(
@@ -51,7 +51,7 @@ const createScene = (
         mainScene.renderer.domElement,
     )
     controls.screenSpacePanning = true
-    controls.target.set(0.0, 1.15, 0.0)
+    controls.target.set(0.0, 0.5, 0.0)
     controls.update()
 
     // Grid Helper

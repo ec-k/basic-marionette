@@ -1,5 +1,4 @@
 import { action, makeObservable, observable } from 'mobx'
-import { Vector3 } from 'three'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 class ObjectHandler {
@@ -12,8 +11,6 @@ class ObjectHandler {
             fbxObjectSrc: observable,
             setfbxObjectSrc: action,
         })
-        // if (this.fbxObjectSrc)
-        //   this.loadVRM(this.fbxObjectSrc)
     }
     get getFbxObject() {
         return this.fbxObject
