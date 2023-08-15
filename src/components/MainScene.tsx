@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { IReactionDisposer, Reaction, reaction } from "mobx";
 import { objectHandler } from "../stores/ObjectHandler";
+import networkHandler from "../models/NetworkHandler";
 
 type MainScene = {
     clock: THREE.Clock
@@ -93,14 +94,18 @@ const MainSceneWindow: React.FC = () => {
     const reqIdRef = React.useRef<number>(0);
     const control = React.useRef<TransformControls | null>(null)
 
+    function mainRoop() {
+        render3d()
+        networkHandler.sendPosRot()
 
+        requestAnimationFrame(mainRoop)
+    }
     function render3d() {
         const scene = sceneRef.current
         const glCtx = scene?.renderer?.getContext()
         if (glCtx && !glCtx.isContextLost() && scene) {
             scene.renderer.render(scene.scene, scene.camera)
         }
-        requestAnimationFrame(render3d)
     }
 
     React.useEffect(() => {
@@ -108,7 +113,7 @@ const MainSceneWindow: React.FC = () => {
         if (!divRef.current) return
         if (!sceneRef.current) createScene(sceneRef, canvasRef.current, divRef.current, control)
         const dispo: IReactionDisposer[] = []
-        render3d()
+        mainRoop()
 
         dispo.push(
             reaction(
@@ -116,13 +121,14 @@ const MainSceneWindow: React.FC = () => {
                 () => {
                     if (sceneRef.current && control.current)
                         objectHandler.loadFbxObject(sceneRef.current.scene, control.current)
-                    // if (control.current && objectHandler.fbxObject)
-                    //     control.current.attach(objectHandler.fbxObject)
                 }
             )
         )
 
-        return () => cancelAnimationFrame(reqIdRef.current)
+        return () => {
+            for (const d of dispo) d()
+            cancelAnimationFrame(reqIdRef.current)
+        }
     }, [])
 
     return <Div ref={divRef}>

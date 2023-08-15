@@ -1,7 +1,8 @@
-import { Vector3, Quaternion } from 'three'
+import { objectHandler } from '../stores/ObjectHandler';
 
 class NetworkHandler {
     private ws_: WebSocket | undefined = undefined
+    sendEnabled_: boolean = false;
 
     constructor(host: string, port: number) {
         this.connectWS(`ws://${host}:${port}`)
@@ -12,7 +13,11 @@ class NetworkHandler {
         this.ws_ = new WebSocket(origin)
     }
 
-    sendPosRot(pos: Vector3, rot: Quaternion) {
+    sendPosRot() {
+        if (!this.sendEnabled_) return
+        if (!objectHandler.fbxObject) return
+        const pos = objectHandler.fbxObject.position
+        const rot = objectHandler.fbxObject.quaternion
         this.ws_?.send(`${pos.x}, ${pos.y}, ${pos.z}, ${rot.x}, ${rot.y}, ${rot.z}, ${rot.w}`)
     }
 }

@@ -15,10 +15,9 @@ const Div = styled.div`
 `
 
 const RightWindow: React.FC = () => {
+
     function syncTransform() {
-        const pos = new Vector3() // Cubeの値から取得するようにする
-        const rot = new Quaternion() // Cubeの価から取得するようにする
-        networkHandler.sendPosRot(pos, rot)
+        networkHandler.sendEnabled_ = !networkHandler.sendEnabled_
     }
     const loadFbx = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const url = URL.createObjectURL(event.target.files![0])
