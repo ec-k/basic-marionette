@@ -107,6 +107,17 @@ const MainSceneWindow: React.FC = () => {
             scene.renderer.render(scene.scene, scene.camera)
         }
     }
+    window.addEventListener('keydown', (event) => {
+        switch (event.keyCode) {
+            case 87: // W
+                control.current?.setMode('translate')
+                break
+            case 69: // E
+                control.current?.setMode('rotate')
+                break
+        }
+    })
+
 
     React.useEffect(() => {
         if (!canvasRef.current) return
