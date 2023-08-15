@@ -16,13 +16,18 @@ const Div = styled.div`
 
 const RightWindow: React.FC = () => {
 
-    function syncTransform() {
+    const syncTransform = () => {
         networkHandler.sendEnabled_ = !networkHandler.sendEnabled_
     }
     const loadFbx = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const url = URL.createObjectURL(event.target.files![0])
         objectHandler.setfbxObjectSrc(url)
         URL.revokeObjectURL(url)
+    }
+    const resetTransform = () => {
+        if (!objectHandler.fbxObject) return
+        objectHandler.fbxObject.position.set(0, 0, 0)
+        objectHandler.fbxObject.quaternion.set(0, 0, 0, 1)
     }
 
     return <Div>
@@ -36,7 +41,7 @@ const RightWindow: React.FC = () => {
                 <Button onClick={syncTransform} variant="outlined">
                     <WifiIcon />
                 </Button>
-                <Button variant="outlined">
+                <Button onClick={resetTransform} variant="outlined">
                     <RestartAltIcon />
                 </Button>
             </Stack>
