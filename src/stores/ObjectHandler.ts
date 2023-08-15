@@ -8,7 +8,7 @@ class ObjectHandler {
 
     constructor() {
         makeObservable(this, {
-            fbxObject: observable,
+            fbxObject: observable.ref,
             fbxObjectSrc: observable,
             setfbxObjectSrc: action,
         })
