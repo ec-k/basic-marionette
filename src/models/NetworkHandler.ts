@@ -18,7 +18,7 @@ class NetworkHandler {
         if (!objectHandler.fbxObject) return
         const pos = objectHandler.fbxObject.position
         const rot = objectHandler.fbxObject.quaternion
-        this.ws_?.send(`${pos.x}, ${pos.y}, ${pos.z}, ${rot.x}, ${rot.y}, ${rot.z}, ${rot.w}`)
+        this.ws_?.send(`${-pos.x}, ${pos.y}, ${pos.z}, ${rot.x}, ${-rot.y}, ${-rot.z}, ${rot.w}`)
     }
 }
 const networkHandler = new NetworkHandler("localhost", 23000)
