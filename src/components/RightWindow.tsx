@@ -4,7 +4,6 @@ import WifiIcon from '@mui/icons-material/Wifi';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import TransformSettingWindw from "./TransformSettingWindow"
 import networkHandler from "../models/NetworkHandler";
-import { Vector3, Quaternion } from 'three'
 import styled from '@emotion/styled'
 import { objectHandler } from "../stores/ObjectHandler";
 
@@ -26,8 +25,9 @@ const RightWindow: React.FC = () => {
     }
     const resetTransform = () => {
         if (!objectHandler.fbxObject) return
-        objectHandler.fbxObject.position.set(0, 0, 0)
-        objectHandler.fbxObject.quaternion.set(0, 0, 0, 1)
+        if (!objectHandler.rest1pos || !objectHandler.rest1rot || !objectHandler.rest2pos || !objectHandler.rest2rot) return
+        objectHandler.fbxObject.children[0].setRotationFromQuaternion(objectHandler.rest2rot)
+        objectHandler.fbxObject.children[0].children[0].setRotationFromQuaternion(objectHandler.rest1rot)
     }
 
     return <Div>

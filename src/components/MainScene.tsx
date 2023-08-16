@@ -108,12 +108,20 @@ const MainSceneWindow: React.FC = () => {
         }
     }
     window.addEventListener('keydown', (event) => {
-        switch (event.keyCode) {
-            case 87: // W
+        switch (event.code) {
+            case 'KeyW':
                 control.current?.setMode('translate')
                 break
-            case 69: // E
+            case 'KeyE':
                 control.current?.setMode('rotate')
+                break
+            case 'Digit1':
+                control.current?.attach(objectHandler.fbxObject?.children[0].children[0]!)
+                console.log('button 1 is pressed.')
+                break
+            case 'Digit2':
+                control.current?.attach(objectHandler.fbxObject?.children[0]!)
+                console.log('button 2 is pressed.')
                 break
         }
     })
